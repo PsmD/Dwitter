@@ -1,27 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { dbService } from "fbase";
 
-const Home = () => {
+const Home = ({userObj}) => {
   const [dweet, setDweet] = useState("");
   const [dweets, setDweets] = useState([]);
-  const getDweets = async () => {
-    const dbDweets = await dbService.collection("dweets").get();
-    dbDweets.forEach((document) => {
-      const dweetObject = {
-        ...document.data(),
-        id: document.id,
-      };
-      setDweets((prev) => [dweetObject, ...prev]);
-    });
-  };
   useEffect(() => {
-    getDweets();
+    dbService.collection("dweets").onSnapshot((snapshot) => {
+      const dweetArray = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setDweets(dweetArray);
+    });
   }, []);
   const onSubmit = async (event) => {
     event.preventDefault();
     await dbService.collection("dweets").add({
-      dweet,
+      text: dweet,
       createdAt: Date.now(),
+      creatorId: userObj.uid,
     });
     setDweet("");
   };
@@ -31,7 +28,6 @@ const Home = () => {
     } = event;
     setDweet(value);
   };
-  console.log(dweets);
   return (
     <div>
       <form onSubmit={onSubmit}>
@@ -47,7 +43,7 @@ const Home = () => {
       <div>
         {dweets.map((dweet) => (
           <div key={dweet.id}>
-            <h4>{dweet.dweet}</h4>
+            <h4>{dweet.text}</h4>
           </div>
         ))}
       </div>
