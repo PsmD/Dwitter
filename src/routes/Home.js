@@ -6,7 +6,7 @@ import Dweet from "components/Dweet";
 const Home = ({userObj}) => {
   const [dweet, setDweet] = useState("");
   const [dweets, setDweets] = useState([]);
-  const [attachment, setAttachment] = useState();
+  const [attachment, setAttachment] = useState("");
   useEffect(() => {
     dbService.collection("dweets").onSnapshot((snapshot) => {
       const dweetArray = snapshot.docs.map((doc) => ({
