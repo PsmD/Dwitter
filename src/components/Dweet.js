@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { dbService, storageService } from "fbase";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 
 const Dweet = ({ dweetObj, isOwner }) => {
   const [editing, setEditing] = useState(false);
@@ -26,32 +28,38 @@ const Dweet = ({ dweetObj, isOwner }) => {
     setNewDweet(value);
   };
   return (
-    <div>
+    <div className="dweet">
       {editing ? (
         <>
-          <form onSubmit={onSubmit}>
+          <form onSubmit={onSubmit} className="container dweetEdit">
             <input
               type="text"
               placeholder="Edit your dweet"
               value={newDweet}
               required
+              autoFocus
               onChange={onChange}
+              className="formInput"
             />
-            <input type="submit" value="Update Dweet" />
+            <input type="submit" value="Update Dweet" className="formBtn" />
           </form>
-          <button onClick={toggleEditing}>Cancel</button>
+          <span onClick={toggleEditing} className="formBtn cancelBtn">
+            Cancel
+          </span>
         </>
       ) : (
         <>
           <h4>{dweetObj.text}</h4>
-          {dweetObj.attachmentUrl && (
-            <img src={dweetObj.attachmentUrl} width="50px" height="50px" />
-          )}
+          {dweetObj.attachmentUrl && <img src={dweetObj.attachmentUrl} />}
           {isOwner && (
-            <>
-              <button onClick={onDeleteClick}>Delete Dweet</button>
-              <button onClick={toggleEditing}>Edit Dweet</button>
-            </>
+            <div class="dweet__actions">
+                            <span onClick={onDeleteClick}>
+                <FontAwesomeIcon icon={faTrash} />
+              </span>
+              <span onClick={toggleEditing}>
+                <FontAwesomeIcon icon={faPencilAlt} />
+              </span>
+            </div>
           )}
         </>
       )}
